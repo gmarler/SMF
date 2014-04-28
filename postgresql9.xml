@@ -61,19 +61,19 @@
   <exec_method
     type='method'
     name='start'
-    exec='/lib/svc/method/postgres9 start'
+    exec='/lib/svc/method/postgresql9 start'
     timeout_seconds='60' />
 
   <exec_method
     type='method'
     name='stop'
-    exec='/lib/svc/method/postgres9 stop'
+    exec='/lib/svc/method/postgresql9 stop'
     timeout_seconds='60' />
 
   <exec_method
     type='method'
     name='refresh'
-    exec='/lib/svc/method/postgres9 refresh'
+    exec='/lib/svc/method/postgresql9 refresh'
     timeout_seconds='60' />
 
   <!--
@@ -124,7 +124,7 @@
       </loctext>
     </common_name>
     <documentation>
-      <manpage title='postgres_90' section='5' />
+      <manpage title='postgresql9' section='5' />
       <doc_link name='postgresql.org'
                 uri='http://postgresql.org' />
     </documentation>
