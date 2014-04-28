@@ -32,9 +32,9 @@ SVCPROP=/usr/bin/svcprop
 
 function getproparg
 {
-  typeset SMF_FMRI=$0
+  typeset SMF_FMRI=$1 property=$2
 
-  typeset val=$(${SVCPROP} -p $1 $SMF_FMRI)
+  typeset val=$(${SVCPROP} -p ${property} $SMF_FMRI)
   [[ -n "$val" ]] && print -- $val
 }
 
