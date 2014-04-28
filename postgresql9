@@ -26,6 +26,7 @@
 . /lib/svc/share/smf_include.sh
 
 SVCPROP=/usr/bin/svcprop
+SVCCFG=/usr/sbin/svccfg
 
 # SMF_FMRI is the name of the target service. This allows multiple instances 
 # to use the same script.
@@ -40,16 +41,8 @@ function getproparg
 
 function check_data_dir
 {
-  if [[ ! -d $PGDATA ]]; then
-    print -- "Error: postgresql9/data directory $PGDATA does not exist"
-    exit $SMF_EXIT_ERR_CONFIG
-  fi
-
-  if [[ ! -w $PGDATA ]]; then
-    print -- "Error: postgresql9/data directory $PGDATA is not writable by postgres"
-    exit $SMF_EXIT_ERR_CONFIG
-  fi
-
+  print -- "DEBUG: SMF_FMRI is [$SMF_FMRI]"
+  print -- "DEBUG: SVCCFG   is [$SVCCFG]"
   if [[ "$PGINIT" == "false" ]]; then
     print -- "Notice: postgresql9/data directory $PGDATA is not initialized"
     print -- "        Calling '$PGBIN/initdb -D $PGDATA' to initialize"
@@ -65,6 +58,17 @@ function check_data_dir
     ${SVCCFG} -s $SMF_FMRI refresh
   fi
 
+  if [[ ! -d $PGDATA ]]; then
+    print -- "Error: postgresql9/data directory $PGDATA does not exist"
+    exit $SMF_EXIT_ERR_CONFIG
+  fi
+
+  if [[ ! -w $PGDATA ]]; then
+    print -- "Error: postgresql9/data directory $PGDATA is not writable by postgres"
+    exit $SMF_EXIT_ERR_CONFIG
+  fi
+
+
   if [[ ! -d $PGDATA/base || ! -d $PGDATA/global || ! -f $PGDATA/PG_VERSION ]]; then
     if [[ $(ls -a $PGDATA | wc -w) -le 2 ]]; then
       print -- "Error: postgresql9/data directory $PGDATA is empty, but it should be initialized"
@@ -76,10 +80,14 @@ function check_data_dir
   fi
 }
 
-PGBIN=$(getproparg $SMF_FMRI postgresql_90/bin)
-PGDATA=$(getproparg $SMF_FMRI postgresql_90/data)
-PGLOG=$(getproparg $SMF_FMRI postgresql_90/log)
-PGINIT=$(getproparg $SMF_FMRI postgresql_90/initialized)
+PGBIN=$(getproparg $SMF_FMRI postgresql9/bin)
+print -- "PGBIN: $PGBIN"
+PGDATA=$(getproparg $SMF_FMRI postgresql9/data)
+print -- "PGDATA: $PGDATA"
+PGLOG=$(getproparg $SMF_FMRI postgresql9/log)
+print -- "PGLOG: $PGLOG"
+PGINIT=$(getproparg $SMF_FMRI postgresql9/initialized)
+print -- "PGINIT: $PGINIT"
 
 if [[ -z $SMF_FMRI ]]; then
   print -- "Error: SMF framework variables are not initialized"
