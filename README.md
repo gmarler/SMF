@@ -5,34 +5,34 @@ Need to use information related here:
 http://www.c0t0d0s0.org/archives/4074-Less-known-Solaris-features-RBAC-and-Privileges-Part-2-Role-based-access-control.html:
 
 # Using authorizations for Services
-Although applications need support to this modell, you can even use it as an admin. SMF has build in support for authorisations. You can assign authorisations to a service. Every role or user with this authorisation is allowed to work with the service (restarting,stop,start,status, ...). Let´s use Apache for this example.
+Although applications need support for this model, you can even use it as an admin. SMF has build in support for authorizations. You can assign authorizations to a service. Every role or user with this authorization is allowed to work with the service (restarting,stop,start,status, ...). Let´s use Apache for this example.
 
 A normal user has no permission to restart the service:
 
     jmoekamp$ /usr/sbin/svcadm -v disable -s apache2
     svcadm: svc:/network/http:apache2: Couldn't modify "general" property group (permission denied).
 
-Wouldn´t it be nice, to have an authorisation that enables an regular user to restart it? Okay, no problem. Let´s create one:
+Wouldn´t it be nice, to have an authorization that enables a regular user to restart it? Okay, no problem. Let´s create one:
 
     $ su root
     # echo "solaris.smf.manage.apache/server:::Apache Server management::" >> /etc/security/auth_attr
 
-That´s all. Where is the definition of the permission that the authorisation measn? There is no defintion. It´s the job of the application to work with.
+That´s all. Where is the definition of the permission that the authorisation measn? There is no definition. It´s the job of the application to work with.
 
-Now assign this authorisation to the user:
+Now assign this authorization to the user:
 
     # usermod -A solaris.smf.manage.apache/server jmoekamp
     UX: usermod: jmoekamp is currently logged in, some changes may not take effect until next login.
 
-Okay, but at the moment no one checks for this authorisation, as no application is aware of it. We have to tell SMF to use this authorisation.
+Okay, but at the moment no one checks for this authorization, as no application is aware of it. We have to tell SMF to use this authorization.
 
-The authorisations for an SMF servers is part of the general properties of the service. Let´s have a look at the properties of this services.
+The authorizations for an SMF servers is part of the general properties of the service. Let´s have a look at the properties of this services.
 
     # svcprop -p general apache2
     general/enabled boolean false
     general/entity_stability astring Evolving
 
-No authorisation configured. Okay ... let´s add the authorisation we´ve defined before:
+No authorization configured. Okay ... let´s add the authorization we´ve defined before:
 
     svccfg -s apache2 setprop general/action_authorization=astring: 'solaris.smf.manage.apache/server'
 
@@ -44,7 +44,7 @@ Check the properties again:
     general/action_authorization astring solaris.smf.manage.apache/server
     general/entity_stability astring Evolving
 
-Okay, a short test. Exit your root shell and login as the regular user you have assigned the authorisation.
+Okay, a short test. Exit your root shell and login as the regular user you have assigned the authorization.
 
     bash-3.2$ svcs apache2
     STATE STIME FMRI
